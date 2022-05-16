@@ -11,6 +11,6 @@ Install requirements
 `pip install -r requirements.txt`
 
 Create build
-`python byild.py`
+`python build.py`
 or
 `pyinstaller --windowed -F main.py`
