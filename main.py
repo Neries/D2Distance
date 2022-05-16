@@ -1,32 +1,23 @@
 import shutil
-import os, sys
 import PySimpleGUI as sg
-from module import *
-
-def resource_path(relative_path):
-    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(base_path, relative_path)
+import с_dlledit
 
 default_replace_value = '1375'
 
 try:
-    dll_data = get_dll_data()
-    current_distance = get_current_distance(dll_data)
+    de = с_dlledit.DllEdit()
 except Exception as e:
     sg.popup('Error', str(e))
 
 sg.theme('DarkGreen3')   # Add a touch of color
 # All the stuff inside your window.
-layout = [[sg.Text('Current distance:', tooltip=f'Default is {default_value}'), sg.Text(current_distance, text_color='green', key='current_distance')],
+layout = [[sg.Text('Current distance:', tooltip=f'Default is {de.default_value}'), sg.Text(de.current_distance, text_color='green', key='current_distance')],
             [sg.Text('Set new distance:'), sg.InputText(default_replace_value, size=(10, 1), key='new_maxdist')],
             [sg.Checkbox('Make reserve copy', key='make_reserve_copy')],
             [sg.Button('Edit'), sg.Button('Exit'), sg.Text('', text_color='green', key='out')]]
 
-
-image_path = resource_path("app.ico")
-print(image_path)
 # Create the Window
-window = sg.Window('D2Distance', layout, alpha_channel=0.9, icon=image_path)
+window = sg.Window('D2Distance', layout, alpha_channel=0.9, icon='app.ico')
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
@@ -43,7 +34,7 @@ while True:
                 if values['make_reserve_copy']:
                     shutil.copyfile(dll_path, "client.dll-copy")
 
-                update_dll(dll_data, new_maxdist)
+                de.update_distance(new_maxdist)
                 window['current_distance'].update(new_maxdist)
                 out['text'] = '✔️Sucess'
                 out['text_color'] = 'green'
