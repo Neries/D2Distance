@@ -1,10 +1,16 @@
 import shutil
 import PySimpleGUI as sg
 from с_dlledit import DllEdit
-
-default_replace_value = '1375'
+import os
 
 sg.theme('DarkGreen3')   # Add a touch of color
+
+dist = {
+    'min': 1000,
+    'def': 1200,
+    'opt': 1375,
+    'max': 2000
+}
 
 try:
     de = DllEdit()
@@ -14,21 +20,36 @@ except Exception as e:
     sg.popup('Error', str(e))
 
 # All the stuff inside your window.
-layout = [[sg.Text('Current distance:', tooltip=f'Default is {de.default_value}'), sg.Text(cd, text_color='green', key='current_distance')],
-          #   [sg.Text('Set new distance:'), sg.InputText(default_replace_value, size=(10, 1), key='new_maxdist')],
-          [sg.Text('Set new distance:'), sg.Slider((1000, 2000), cd, orientation='h',
+layout = [[ sg.Slider((dist['min'], dist['max']), cd, orientation='h', resolution=5, s = (28,None), border_width=5, tooltip='Set new distance',
                                                    key='new_maxdist', font='Courier 8', text_color='green')],
+          [sg.Button('Min', tooltip=dist['min']), sg.Button('Default', tooltip=dist['def']), sg.Button('Optimal', tooltip=dist['opt']), sg.Button('Max', tooltip=dist['max'])],
           [sg.Checkbox('Make reserve copy', key='make_reserve_copy')],
           [sg.Button('Save'), sg.Button('Exit'), sg.Text('', text_color='green', key='out')]]
 
+
+root = os.path.split(__file__)[0]
+icon_path = os.path.join(root, 'app.ico')
+
 # Create the Window
-window = sg.Window('D2Distance', layout, alpha_channel=0.9, icon='app.ico')
+window = sg.Window('D2Distance', layout, alpha_channel=0.9, icon=icon_path)
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED or event == 'Exit':  # if user closes window or clicks cancel
         break
+    
+    if event == 'Min':
+        window['new_maxdist'].update(dist['min'])
+        
+    if event == 'Default':
+        window['new_maxdist'].update(dist['def'])
+        
+    if event == 'Optimal':
+        window['new_maxdist'].update(dist['opt'])
+        
+    if event == 'Max':
+        window['new_maxdist'].update(dist['max'])
 
     if event == 'Save':
         new_maxdist = int(values['new_maxdist'])
@@ -39,7 +60,6 @@ while True:
                 shutil.copyfile(de.dll_path, "client.dll-copy")
 
             de.update_distance(new_maxdist)
-            window['current_distance'].update(new_maxdist)
             out['text'] = 'Success ✔️'
             out['text_color'] = 'green'
         except Exception as e:
