@@ -5,6 +5,8 @@ import os
 
 sg.theme('DarkGreen3')   # Add a touch of color
 
+version = 0.3
+
 dist = {
     'min': 1000,
     'def': 1200,
@@ -31,7 +33,7 @@ root = os.path.split(__file__)[0]
 icon_path = os.path.join(root, 'app.ico')
 
 # Create the Window
-window = sg.Window('D2Distance', layout, alpha_channel=0.9, icon=icon_path)
+window = sg.Window(f'D2Distance | v{version}', layout, alpha_channel=0.9, icon=icon_path, resizable=True)
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
