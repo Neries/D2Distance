@@ -5,7 +5,7 @@ import os
 
 sg.theme('DarkGreen3')   # Add a touch of color
 
-version = 0.3
+version = '0.4'
 
 dist = {
     'min': 1000,
